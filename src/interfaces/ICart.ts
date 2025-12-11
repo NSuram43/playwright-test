@@ -6,4 +6,5 @@ export interface ICartLocators {
     getContinueShoppingButton:Locator;
     getMyCart_hdr:Locator;
     cartTotalPrice:Locator;
+    cartSubTotalPrice:Locator;
 }

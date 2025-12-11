@@ -24,11 +24,13 @@ export class Dashboard{
         await expect(this.locators.getBlinkingLabel).toHaveText('User can only see maximum 9 products on a page');
     }
     async addProductToCart(productName:string){
+        const productTitle = productName.toLowerCase();
         const productCards = this.locators.getProductCard;
         const count = await productCards.count();
         for(let i=0; i<count; i++){
             const title = await productCards.nth(i).locator(this.locators.getProduct_title).textContent();
-            if(title?.trim().toLowerCase().includes(productName.toLowerCase())){
+            const normalizedTitle = title?.trim().toLowerCase() || '';
+            if(normalizedTitle.includes(productTitle)){
                 await productCards.nth(i).locator('button:text("Add to Cart")').click();
                 await this.locators.getCardCount.waitFor({state:'visible'});
                 const cartCountText = await this.locators.getCardCount.textContent();
@@ -45,12 +47,15 @@ export class Dashboard{
             const title = await productCards.nth(i).locator(this.locators.getProduct_title).textContent();
             if(title?.trim().toLowerCase().includes(productName.toLowerCase())){
                 const priceText = await productCards.nth(i).locator('.text-muted').textContent();
-                return priceText?.split('$')[0].trim();
+                return priceText?.split('$')[1].trim();
             }
         }
         return null;
     }
     async navigateToCart(){
         await this.locators.getCartBtn.click();
+    }
+    async navigateToOrders(){
+        await this.locators.getOrdersBtn.click();
     }
 }

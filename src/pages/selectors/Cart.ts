@@ -3,5 +3,6 @@ export const cartSelectors = {
     getCheckoutButton: '.subtotal button',
     getContinueShoppingButton: 'button[routerlink="/dashboard"]',
     getMyCart_hdr:'.heading h1',
-    cartTotalPrice: 'li.totalRow .label:has-text("Total") + .value',
+    cartSubTotalPrice: 'xpath=(//li[@class="totalRow"] /span[@class="value"])[1]',
+    cartTotalPrice: 'xpath=(//li[@class="totalRow"] /span[@class="value"])[2]',
 }
