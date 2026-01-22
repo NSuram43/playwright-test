@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect,request } from "@playwright/test";
 import { LoginPage } from "../src/PageObjects/LoginPage";
 import { Dashboard } from "../src/PageObjects/DashboardPage";
 import { CartPage } from "../src/PageObjects/CartPage";
@@ -17,6 +17,28 @@ import { OrderDetailsPage } from "@src/PageObjects/OrderDetailsPage";
     let orderConfirmationPage:OrderConfirmationPage;
     let orderHistoryPage:OrderHistoryPage;
     let orderDetails:OrderDetailsPage;
+    let token:any;
+
+    test.beforeAll( async ()=>{
+        const apiContext = await request.newContext({
+            ignoreHTTPSErrors: true
+        });
+        const loginResponse = await apiContext.post("https://rahulshettyacademy.com/api/ecom/auth/login", {
+            data: {
+                userEmail: process.env.EMAIL,
+                userPassword: process.env.PASSWORD
+            }
+        })
+        expect(loginResponse.ok()).toBeTruthy();
+        const loginResponseBody = await loginResponse.json();
+        token = loginResponseBody.token;
+    })
+    test.beforeEach( async ({page})=>{
+        // Set the token in local storage before each test
+        await page.addInitScript( value => {
+            window.localStorage.setItem('token', value);
+        }, token);
+    });
 
 test.describe("end-to-end test", () => {
     test.describe.configure({ timeout:60000 });
@@ -37,7 +59,7 @@ test.describe("end-to-end test", () => {
             throw new Error('Email or password is not defined in the environment variables.');
         }
 
-        await loginPage.login(email, password);
+        // await loginPage.login(email, password);
         await expect(page).toHaveURL(URLS.DASHBOARD_URL); 
 
     });
