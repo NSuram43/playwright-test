@@ -37,7 +37,7 @@ export default defineConfig({
 
     /* Record video for each test */
     video: "retain-on-failure",
-    headless: false,
+    headless: true,
     acceptDownloads: true,
     navigationTimeout: 60000,
   },
