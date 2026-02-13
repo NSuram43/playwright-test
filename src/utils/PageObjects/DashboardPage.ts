@@ -1,7 +1,7 @@
 import { expect, Page } from "@playwright/test";
 import { Locator } from "@playwright/test";
-import { IDashboardPageLocators } from "../interfaces/IDashboardPage";
-import { dashboardSelectors } from "../pages/selectors/dashboard";
+import { IDashboardPageLocators } from "../../interfaces/IDashboardPage";
+import { dashboardSelectors } from "../../pages/selectors/dashboard";
 
 export class Dashboard {
   readonly page: Page;

@@ -1,14 +1,15 @@
 import { test, expect, request } from "@playwright/test";
-import { LoginPage } from "../src/PageObjects/LoginPage";
-import { Dashboard } from "../src/PageObjects/DashboardPage";
-import { CartPage } from "../src/PageObjects/CartPage";
-import { OrderPage } from "../src/PageObjects/OrderPage";
+import { LoginPage } from "../src/utils/PageObjects/LoginPage";
+import { Dashboard } from "../src/utils/PageObjects/DashboardPage";
+import { CartPage } from "../src/utils/PageObjects/CartPage";
+import { OrderPage } from "../src/utils/PageObjects/OrderPage";
 import { ProductDetails } from "../src/utils/constants";
 import { URLS } from "../src/utils/Urls";
-import { productTestCases } from "@src/fixtures/ProductDetails";
-import { OrderConfirmationPage } from "../src/PageObjects/OrderConfirmation";
-import { OrderHistoryPage } from "@src/PageObjects/OrderHistoryPage";
-import { OrderDetailsPage } from "@src/PageObjects/OrderDetailsPage";
+import { productTestCases } from "../src/fixtures/ProductDetails";
+import { OrderConfirmationPage } from "../src/utils/PageObjects/OrderConfirmation";
+import { OrderHistoryPage } from "../src/utils/PageObjects/OrderHistoryPage";
+import { OrderDetailsPage } from "../src/utils/PageObjects/OrderDetailsPage";
+import { PageFactory } from "../src/utils/PageObjects/PageFactory";
 
 let loginPage: LoginPage;
 let dashboardPage: Dashboard;
@@ -18,6 +19,7 @@ let orderConfirmationPage: OrderConfirmationPage;
 let orderHistoryPage: OrderHistoryPage;
 let orderDetails: OrderDetailsPage;
 let token: any;
+let pageFactory: PageFactory;
 
 test.beforeAll(async () => {
   const apiContext = await request.newContext({
@@ -36,6 +38,7 @@ test.beforeAll(async () => {
   const loginResponseBody = await loginResponse.json();
   token = loginResponseBody.token;
 });
+
 test.beforeEach(async ({ page }) => {
   // Set the token in local storage before each test
   await page.addInitScript((value) => {
@@ -47,13 +50,14 @@ test.describe("end-to-end test", () => {
   test.describe.configure({ timeout: 60000 });
   test.use({ ignoreHTTPSErrors: true });
   test.beforeEach(async ({ page }) => {
-    loginPage = new LoginPage(page);
-    dashboardPage = new Dashboard(page);
-    cartPage = new CartPage(page);
-    orderPage = new OrderPage(page);
-    orderConfirmationPage = new OrderConfirmationPage(page);
-    orderHistoryPage = new OrderHistoryPage(page);
-    orderDetails = new OrderDetailsPage(page);
+    pageFactory = new PageFactory(page);
+    loginPage = pageFactory.getLoginPage();
+    dashboardPage = pageFactory.getDashboardPage();
+    cartPage = pageFactory.getCartPage();
+    orderPage = pageFactory.getOrderPage();
+    orderConfirmationPage = pageFactory.getOrderConfirmationPage();
+    orderHistoryPage = pageFactory.getOrderHistoryPage();
+    orderDetails = pageFactory.getOrderDetailsPage();
 
     await page.goto("https://rahulshettyacademy.com/client/#/auth/login");
     const email = process.env.EMAIL;
