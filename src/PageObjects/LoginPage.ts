@@ -1,26 +1,28 @@
 import { Page } from "@playwright/test";
-import { ILoginPageLocators } from "../interfaces/ILoginPage";
-import { loginSelectors } from "../pages/selectors/Login";
+import { Locator } from "@playwright/test";
+import { loginSelectors } from "@src/pages/selectors/Login";
 
+export class LoginPage {
+  readonly page: Page;
+  readonly usernameInput: Locator;
+  readonly passwordInput: Locator;
+  readonly loginButton: Locator;
+  readonly registerLink: Locator;
 
-export class LoginPage{
-    readonly page:Page;
-    public locators: ILoginPageLocators;
-    constructor(page:Page){
-        this.page=page;
-        this.locators = {} as ILoginPageLocators;
-        for(const key of Object.keys(loginSelectors) as Array<keyof typeof loginSelectors>){
-            const selector = loginSelectors[key];
-            this.locators[key] = this.page.locator(selector);
-        }
-    }
+  constructor(page: Page) {
+    this.page = page;
+    this.usernameInput = page.locator(loginSelectors.usernameInput);
+    this.passwordInput = page.locator(loginSelectors.passwordInput);
+    this.loginButton = page.locator(loginSelectors.loginButton);
+    this.registerLink = page.locator(loginSelectors.registerLink);
+  }
 
-    async login(username:string, password:string){
-        await this.locators.usernameInput.fill(username);
-        await this.locators.passwordInput.fill(password);
-        await this.locators.loginButton.click();
-    }
-    async navigateToRegisterPage(){
-        await this.locators.registerLink.click();
-    }
+  async login(username: string, password: string) {
+    await this.usernameInput.fill(username);
+    await this.passwordInput.fill(password);
+    await this.loginButton.click();
+  }
+  async navigateToRegisterPage() {
+    await this.registerLink.click();
+  }
 }

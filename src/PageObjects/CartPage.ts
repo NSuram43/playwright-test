@@ -1,46 +1,56 @@
 import { expect, Page } from "@playwright/test";
-import { ICartLocators } from "@src/interfaces/ICart";
-import { cartSelectors } from "@src/pages/selectors/Cart";
+import { Locator } from "@playwright/test";
 
-export class CartPage{
-    readonly page:Page;
-    public locators:ICartLocators;
-    constructor(page:Page){
-        this.page=page;
-        this.locators = {} as ICartLocators;
-        for(const key of Object.keys(cartSelectors) as Array<keyof typeof cartSelectors>){
-            const selector = cartSelectors[key];
-            this.locators[key] = this.page.locator(selector);
-        }
+export class CartPage {
+  readonly page: Page;
+  readonly getCartItems: Locator;
+  readonly getCheckoutButton: Locator;
+  readonly getContinueShoppingButton: Locator;
+  readonly getMyCart_hdr: Locator;
+  readonly cartSubTotalPrice: Locator;
+  readonly cartTotalPrice: Locator;
+  constructor(page: Page) {
+    this.page = page;
+    this.getCartItems = page.locator(".items");
+    this.getCheckoutButton = page.locator(".subtotal button");
+    this.getContinueShoppingButton = page.locator(
+      'button[routerlink="/dashboard"]'
+    );
+    this.getMyCart_hdr = page.locator(".heading h1");
+    this.cartSubTotalPrice = page.locator(
+      'xpath=(//li[@class="totalRow"] /span[@class="value"])[1]'
+    );
+    this.cartTotalPrice = page.locator(
+      'xpath=(//li[@class="totalRow"] /span[@class="value"])[2]'
+    );
+  }
+  async getCartItemsCount(): Promise<number> {
+    return await this.getCartItems.count();
+  }
+  async getCartTotalPrice(): Promise<string> {
+    return (await this.cartTotalPrice.textContent()) || "";
+  }
+  async proceedToCheckout() {
+    await this.getCheckoutButton.click();
+  }
+  async validateCartItems(expectedItems: string[]) {
+    const cartItems = this.getCartItems;
+    const count = await cartItems.count();
+    const actualItems: string[] = [];
+    for (let i = 0; i < count; i++) {
+      const itemName = await cartItems.nth(i).locator("h3").textContent();
+      if (itemName) {
+        actualItems.push(itemName.trim().toLowerCase());
+      }
     }
-    async getCartItemsCount():Promise<number>{
-        return await this.locators.getCartItems.count();
-    }
-    async getCartTotalPrice():Promise<string>{
-        return await this.locators.cartTotalPrice.textContent() || '';
-    }
-    async proceedToCheckout(){
-        await this.locators.getCheckoutButton.click();
-    }
-    async validateCartItems(expectedItems:string[]){
-        const cartItems = this.locators.getCartItems;
-        const count = await cartItems.count();
-        const actualItems:string[] = [];
-        for(let i=0; i<count; i++){
-            const itemName = await cartItems.nth(i).locator('h3').textContent();
-            if(itemName){
-                actualItems.push(itemName.trim().toLowerCase());
-            }
-        }
-        expectedItems.forEach(item=>{
-            if(!actualItems.includes(item.toLowerCase())){
-                throw new Error(`Expected item ${item} not found in cart`);
-            }
-        });
-    }
-    async continueShopping(){
-        await this.locators.getContinueShoppingButton.click();
-        await expect(this.page.url()).toContain('/dashboard/dash');
-    }
+    expectedItems.forEach((item) => {
+      if (!actualItems.includes(item.toLowerCase())) {
+        throw new Error(`Expected item ${item} not found in cart`);
+      }
+    });
+  }
+  async continueShopping() {
+    await this.getContinueShoppingButton.click();
+    await expect(this.page.url()).toContain("/dashboard/dash");
+  }
 }
-    
