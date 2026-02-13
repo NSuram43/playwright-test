@@ -1,6 +1,4 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { IOrderConfirmation } from "@src/interfaces/IOrderConfirmation";
-import { orderConfirmationSelectors } from "@src/pages/selectors/OrderConfirmation";
 
 export class OrderConfirmationPage {
   readonly page: Page;

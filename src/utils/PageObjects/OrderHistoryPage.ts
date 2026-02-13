@@ -1,6 +1,5 @@
 import { expect, Locator, Page } from "@playwright/test";
-import { IOrderHistory } from "@src/interfaces/IOrderHistory";
-import { orderHistorySelectors } from "@src/pages/selectors/orderHistory";
+import { orderHistorySelectors } from "@src/pages/selectors/OrderHistory";
 
 export class OrderHistoryPage {
   readonly page: Page;
