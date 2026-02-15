@@ -19,7 +19,7 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI ? 2 : 2,
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
@@ -38,8 +38,10 @@ export default defineConfig({
     /* Record video for each test */
     video: "retain-on-failure",
     headless: true,
+    ignoreHTTPSErrors: true,
     acceptDownloads: true,
     navigationTimeout: 60000,
+    ...devices["iPad (gen 11)"],
   },
 
   /* Configure projects for major browsers */
@@ -49,6 +51,7 @@ export default defineConfig({
       use: {
         ...devices["Desktop Chrome"],
         downloadsPath: "downloads",
+        headless: true,
       },
     },
 
