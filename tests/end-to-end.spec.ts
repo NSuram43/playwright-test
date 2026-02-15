@@ -22,9 +22,7 @@ let token: any;
 let pageFactory: PageFactory;
 
 test.beforeAll(async () => {
-  const apiContext = await request.newContext({
-    ignoreHTTPSErrors: true,
-  });
+  const apiContext = await request.newContext();
   const loginResponse = await apiContext.post(
     "https://rahulshettyacademy.com/api/ecom/auth/login",
     {
@@ -45,10 +43,9 @@ test.beforeEach(async ({ page }) => {
     window.localStorage.setItem("token", value);
   }, token);
 });
-
+test.describe.configure({ mode: "default" });
 test.describe("end-to-end test", () => {
   test.describe.configure({ timeout: 60000 });
-  test.use({ ignoreHTTPSErrors: true });
   test.beforeEach(async ({ page }) => {
     pageFactory = new PageFactory(page);
     loginPage = pageFactory.getLoginPage();
@@ -74,7 +71,7 @@ test.describe("end-to-end test", () => {
   });
 
   productTestCases.forEach((data) => {
-    test(`E2E - ${data.testName}`, async ({ page }) => {
+    test(`@regression E2E - ${data.testName}`, async ({ page }) => {
       await dashboardPage.validateDashboardPage();
       const productsForValidation: ProductDetails[] = [];
       let calculatedTotal = 0;
